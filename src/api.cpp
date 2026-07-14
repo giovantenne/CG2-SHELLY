@@ -6,6 +6,7 @@
 #include "display.h"
 #include "app_store.h"
 #include "api.h"
+#include "config.h"
 
 namespace {
 const char* kFormMimeType = "application/x-www-form-urlencoded";
@@ -175,7 +176,8 @@ String formEncode(const String& value) {
 }  // namespace
 
 bool fetchShellyStatus() {
-  if (shellyDeviceId.length() == 0 || shellyAuthKey.length() == 0) {
+  if (shellyDeviceId.length() == 0 || shellyAuthKey.length() == 0 ||
+      !isValidShellyServerUri(shellyServerUri)) {
     return false;
   }
 
@@ -184,7 +186,7 @@ bool fetchShellyStatus() {
   client.setTimeout(12000);
 
   HTTPClient http;
-  String url = "https://" + shellyCloudHost + "/device/status";
+  String url = "https://" + shellyServerUri + "/device/status";
   if (!http.begin(client, url)) {
     return false;
   }

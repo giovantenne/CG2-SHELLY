@@ -14,7 +14,6 @@ using fs::File;
 
 // Version and API
 extern const String firmwareVersion;
-extern const String shellyCloudHost;
 extern float shellyGaugeMaxWatts;
 
 // Display
@@ -43,6 +42,7 @@ extern AutoConnectText captionShelly;
 extern AutoConnectText captionHr;
 extern AutoConnectInput inputShellyDeviceId;
 extern AutoConnectInput inputShellyAuthKey;
+extern AutoConnectInput inputShellyServerUri;
 extern AutoConnectSelect inputPollingIntervalSeconds;
 extern AutoConnectSelect inputGaugeMaxKilowatts;
 extern AutoConnectSubmit save2;
@@ -65,6 +65,7 @@ extern short missingUpdateCount;
 extern short displayBrightness;
 extern String shellyDeviceId;
 extern String shellyAuthKey;
+extern String shellyServerUri;
 extern unsigned short pollingIntervalSeconds;
 extern unsigned short gaugeMaxKilowatts;
 extern short batteryPercent;

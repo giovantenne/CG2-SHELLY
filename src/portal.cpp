@@ -27,6 +27,7 @@ void selectCurrentValue(AutoConnectSelect& select, const String& value) {
 String initialize2(AutoConnectAux& aux, PageArgument& args) {
   inputShellyDeviceId.value = shellyDeviceId;
   inputShellyAuthKey.value = shellyAuthKey;
+  inputShellyServerUri.value = shellyServerUri;
   selectCurrentValue(inputPollingIntervalSeconds, String(pollingIntervalSeconds));
   selectCurrentValue(inputGaugeMaxKilowatts, String(gaugeMaxKilowatts));
   return String();
@@ -105,25 +106,31 @@ void handleSaveSettings(void){
 
   String newDeviceId = Server.arg("inputShellyDeviceId");
   String newAuthKey = Server.arg("inputShellyAuthKey");
+  String newServerUri = Server.arg("inputShellyServerUri");
   String newPollingInterval = Server.arg("inputPollingIntervalSeconds");
   String newGaugeMax = Server.arg("inputGaugeMaxKilowatts");
   newDeviceId.trim();
   newAuthKey.trim();
+  newServerUri.trim();
+  newServerUri.toLowerCase();
   newPollingInterval.trim();
   newGaugeMax.trim();
 
   bool requestSuccessful = false;
   String oldDeviceId = shellyDeviceId;
   String oldAuthKey = shellyAuthKey;
+  String oldServerUri = shellyServerUri;
   unsigned short oldPollingInterval = pollingIntervalSeconds;
   unsigned short oldGaugeMax = gaugeMaxKilowatts;
 
   if (isValidShellyDeviceId(newDeviceId) &&
       newAuthKey.length() > 0 &&
       newAuthKey.length() <= 192 &&
+      isValidShellyServerUri(newServerUri) &&
       isValidPollingInterval(newPollingInterval) &&
       isValidGaugeMaxKilowatts(newGaugeMax)) {
     configStoreSetShellyCredentials(newDeviceId, newAuthKey);
+    configStoreSetShellyServerUri(newServerUri);
     configStoreSetPollingInterval((unsigned short)newPollingInterval.toInt());
     configStoreSetGaugeMaxKilowatts((unsigned short)newGaugeMax.toInt());
     if (fetchShellyStatus()) {
@@ -131,6 +138,7 @@ void handleSaveSettings(void){
       requestSuccessful = true;
     } else {
       configStoreSetShellyCredentials(oldDeviceId, oldAuthKey);
+      configStoreSetShellyServerUri(oldServerUri);
       configStoreSetPollingInterval(oldPollingInterval);
       configStoreSetGaugeMaxKilowatts(oldGaugeMax);
     }

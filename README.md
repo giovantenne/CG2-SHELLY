@@ -32,6 +32,7 @@ This is a remix of my other project CryptoGadgets v2 (CG2) that I created for my
 7. Open **Settings** and configure:
    - `Device ID`: the Shelly device identifier, for example `a1b2c3d4e5f6`.
    - `Auth key`: the Shelly Cloud authorization key. Treat this value as a password.
+   - `Server URI`: the account-specific Shelly Cloud hostname, without `https://`, for example `shelly-269-eu.shelly.cloud`.
    - `Refresh interval`: 1, 2, 3, 5, 10, 15, 30, 60, 120, 300, 600, 900, 1800, or 3600 seconds.
    - `Gauge maximum power`: tachometer full scale from 1 to 100 kW.
 8. Select **Save**. The firmware verifies the Shelly credentials before storing them.
@@ -74,7 +75,7 @@ Limitations:
 - Gen1 devices use a different status format and are not supported.
 - On multi-channel devices based on `switch:*`, only `switch:0` is read.
 - Power exposed only through `cover:*`, `light:*`, or other component types is not supported.
-- The Shelly Cloud endpoint is currently configured for `shelly-269-eu.shelly.cloud`.
+- The Server URI must be the `*.shelly.cloud` hostname associated with the account.
 
 ## Requirements
 
@@ -139,11 +140,11 @@ pio test -e ttgo-t1 -v
 The firmware sends an HTTP POST request at the configured interval:
 
 ```sh
-curl -X POST "https://shelly-269-eu.shelly.cloud/device/status" \
+curl -X POST "https://<server_uri>/device/status" \
   -d "id=<device_id>&auth_key=<auth_key>"
 ```
 
-The device ID and authorization key are URL-encoded before transmission. They are stored in the ESP32 EEPROM and are never included in the source code.
+The Server URI and authorization key are available from Shelly Smart Control under **User settings > Authorization cloud key**. The device ID and authorization key are URL-encoded before transmission. All three values are stored in the ESP32 EEPROM and are never included in the source code.
 
 ## Project Structure
 

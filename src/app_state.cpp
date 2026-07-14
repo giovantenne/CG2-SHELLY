@@ -20,7 +20,6 @@ std::vector<String> gaugeMaxOptions() {
 }  // namespace
 
 // Version and API
-const String shellyCloudHost = "shelly-269-eu.shelly.cloud";
 float shellyGaugeMaxWatts = 6000.0f;
 
 // Display
@@ -45,14 +44,15 @@ ACText(caption1, "Do you want to perform a factory reset?");
 ACSubmit(save1, "Yes, reset the device", "/delconnexecute");
 AutoConnectAux aux1("/delconn", "Reset", true, {caption1, save1});
 AutoConnectAux aux1Execute("/delconnexecute", "Wifi reset", false);
-ACText(captionShelly, "<hr><strong>Shelly Cloud</strong><br><small>Enter the Shelly device id and authorization cloud key.</small><br>");
+ACText(captionShelly, "<hr><strong>Shelly Cloud</strong><br><small>Enter the device id, server URI, and authorization cloud key.</small><br>");
 ACText(captionHr, "<hr>");
 ACInput(inputShellyDeviceId, "", "Device ID", "", "a1b2c3d4e5f6");
 ACInput(inputShellyAuthKey, "", "Auth key", "", "", AC_Tag_BR, AC_Input_Password);
+ACInput(inputShellyServerUri, "shelly-269-eu.shelly.cloud", "Server URI", "", "shelly-269-eu.shelly.cloud");
 ACSelect(inputPollingIntervalSeconds, pollingIntervalOptions(), "Refresh interval (seconds)", 4);
 ACSelect(inputGaugeMaxKilowatts, gaugeMaxOptions(), "Gauge maximum power (kW)", 6);
 ACSubmit(save2, "Save", "/setupexecute");
-AutoConnectAux aux2("/setup", "Settings", true, {captionShelly, inputShellyDeviceId, inputShellyAuthKey, inputPollingIntervalSeconds, inputGaugeMaxKilowatts, captionHr, save2});
+AutoConnectAux aux2("/setup", "Settings", true, {captionShelly, inputShellyDeviceId, inputShellyAuthKey, inputShellyServerUri, inputPollingIntervalSeconds, inputGaugeMaxKilowatts, captionHr, save2});
 AutoConnectAux aux3("/setupexecute", "", false);
 
 // Data/state
@@ -71,6 +71,7 @@ short missingUpdateCount = 0;
 short displayBrightness = 21;
 String shellyDeviceId;
 String shellyAuthKey;
+String shellyServerUri = "shelly-269-eu.shelly.cloud";
 unsigned short pollingIntervalSeconds = 5;
 unsigned short gaugeMaxKilowatts = 6;
 

@@ -58,6 +58,23 @@ bool isValidShellyDeviceId(String deviceId) {
   return true;
 }
 
+bool isValidShellyServerUri(String serverUri) {
+  serverUri.trim();
+  serverUri.toLowerCase();
+  if (serverUri.length() == 0 || serverUri.length() > 128 ||
+      !serverUri.endsWith(".shelly.cloud") ||
+      serverUri.startsWith(".") || serverUri.endsWith(".")) {
+    return false;
+  }
+  for (byte i = 0; i < serverUri.length(); ++i) {
+    char c = serverUri.charAt(i);
+    if (!isAlphaNumeric(c) && c != '-' && c != '.') {
+      return false;
+    }
+  }
+  return true;
+}
+
 bool isValidPollingInterval(String seconds) {
   seconds.trim();
   if (seconds.length() == 0) {
@@ -87,7 +104,9 @@ bool isValidGaugeMaxKilowatts(String kilowatts) {
 }
 
 bool hasShellyCredentials() {
-  return isValidShellyDeviceId(shellyDeviceId) && shellyAuthKey.length() > 0;
+  return isValidShellyDeviceId(shellyDeviceId) &&
+         shellyAuthKey.length() > 0 &&
+         isValidShellyServerUri(shellyServerUri);
 }
 
 boolean isValidNumber(String str){
@@ -105,6 +124,7 @@ void resetConfigToDefaults() {
   displayBrightness = 41;
   shellyDeviceId = "";
   shellyAuthKey = "";
+  configStoreSetShellyServerUri("shelly-269-eu.shelly.cloud");
   configStoreSetPollingInterval(5);
   configStoreSetGaugeMaxKilowatts(6);
   hasPowerReading = false;
@@ -112,7 +132,7 @@ void resetConfigToDefaults() {
 
   int addr = 0;
   EEPROM.write(addr++, 0xC6);
-  EEPROM.write(addr++, 4);
+  EEPROM.write(addr++, 5);
   EEPROM.write(addr++, displayBrightness);
   writeStringToEEPROM(addr, shellyDeviceId);
   addr += 2 + shellyDeviceId.length();
@@ -122,6 +142,7 @@ void resetConfigToDefaults() {
   EEPROM.write(addr++, (pollingIntervalSeconds >> 8) & 0xFF);
   EEPROM.write(addr++, gaugeMaxKilowatts & 0xFF);
   EEPROM.write(addr++, (gaugeMaxKilowatts >> 8) & 0xFF);
+  writeStringToEEPROM(addr, shellyServerUri);
   EEPROM.commit();
 
   delay(3000);
@@ -133,7 +154,7 @@ void loadConfigFromEEPROM(){
   int addr = 0;
   uint8_t signature = EEPROM.read(addr++);
   uint8_t version = EEPROM.read(addr++);
-  if (signature != 0xC6 || (version < 1 || version > 4)) {
+  if (signature != 0xC6 || version != 5) {
     resetConfigToDefaults();
     return;
   }
@@ -141,27 +162,21 @@ void loadConfigFromEEPROM(){
   short b = EEPROM.read(addr++);
   String deviceId = readStringFromEEPROM(addr, 32);
   String authKey = readStringFromEEPROM(addr, 192);
-  unsigned short refreshSeconds = 5;
-  unsigned short maxKilowatts = 6;
-  if (version <= 2) {
-    readStringFromEEPROM(addr, 1600);  // Skip the removed legacy field.
+  unsigned short refreshSeconds = EEPROM.read(addr) | (EEPROM.read(addr + 1) << 8);
+  addr += 2;
+  if (refreshSeconds < 1 || refreshSeconds > 3600) {
+    refreshSeconds = 5;
   }
-  if (version >= 2) {
-    refreshSeconds = EEPROM.read(addr) | (EEPROM.read(addr + 1) << 8);
-    addr += 2;
-    if (refreshSeconds < 1 || refreshSeconds > 3600) {
-      refreshSeconds = 5;
-    }
+  unsigned short maxKilowatts = EEPROM.read(addr) | (EEPROM.read(addr + 1) << 8);
+  addr += 2;
+  if (maxKilowatts < 1 || maxKilowatts > 100) {
+    maxKilowatts = 6;
   }
-  if (version >= 4) {
-    maxKilowatts = EEPROM.read(addr) | (EEPROM.read(addr + 1) << 8);
-    if (maxKilowatts < 1 || maxKilowatts > 100) {
-      maxKilowatts = 6;
-    }
-  }
+  String serverUri = readStringFromEEPROM(addr, 128);
 
   configStoreSetBrightness(b);
   configStoreSetShellyCredentials(deviceId, authKey);
+  configStoreSetShellyServerUri(serverUri);
   configStoreSetPollingInterval(refreshSeconds);
   configStoreSetGaugeMaxKilowatts(maxKilowatts);
 

@@ -7,6 +7,7 @@ AppState getAppState() {
   s.config.displayBrightness = displayBrightness;
   s.config.shellyDeviceId = shellyDeviceId;
   s.config.shellyAuthKey = shellyAuthKey;
+  s.config.shellyServerUri = shellyServerUri;
   s.config.pollingIntervalSeconds = pollingIntervalSeconds;
   s.config.gaugeMaxKilowatts = gaugeMaxKilowatts;
   // Runtime

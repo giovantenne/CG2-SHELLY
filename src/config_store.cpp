@@ -17,6 +17,10 @@ void configStoreSetShellyCredentials(const String& deviceId, const String& authK
   shellyAuthKey = authKey;
 }
 
+void configStoreSetShellyServerUri(const String& serverUri) {
+  shellyServerUri = serverUri;
+}
+
 void configStoreSetBrightness(short b) {
   displayBrightness = b;
 }
@@ -34,7 +38,7 @@ void configStoreSetGaugeMaxKilowatts(unsigned short kilowatts) {
 void configStorePersist() {
   int addr = 0;
   EEPROM.write(addr++, 0xC6);
-  EEPROM.write(addr++, 4);
+  EEPROM.write(addr++, 5);
   EEPROM.write(addr++, displayBrightness);
   writeStringToEEPROMLocal(addr, shellyDeviceId);
   addr += 2 + shellyDeviceId.length();
@@ -44,5 +48,6 @@ void configStorePersist() {
   EEPROM.write(addr++, (pollingIntervalSeconds >> 8) & 0xFF);
   EEPROM.write(addr++, gaugeMaxKilowatts & 0xFF);
   EEPROM.write(addr++, (gaugeMaxKilowatts >> 8) & 0xFF);
+  writeStringToEEPROMLocal(addr, shellyServerUri);
   EEPROM.commit();
 }

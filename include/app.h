@@ -8,6 +8,7 @@ struct ConfigState {
   short displayBrightness = 0;
   String shellyDeviceId;
   String shellyAuthKey;
+  String shellyServerUri;
   unsigned short pollingIntervalSeconds = 5;
   unsigned short gaugeMaxKilowatts = 6;
 };

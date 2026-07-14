@@ -4,6 +4,7 @@
 #include <Arduino.h>
 
 void configStoreSetShellyCredentials(const String& deviceId, const String& authKey);
+void configStoreSetShellyServerUri(const String& serverUri);
 void configStoreSetBrightness(short b);
 void configStoreSetPollingInterval(unsigned short seconds);
 void configStoreSetGaugeMaxKilowatts(unsigned short kilowatts);

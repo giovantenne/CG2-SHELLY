@@ -35,6 +35,15 @@ void test_isValidPollingInterval() {
   TEST_ASSERT_FALSE(isValidPollingInterval(""));
 }
 
+void test_isValidShellyServerUri() {
+  TEST_ASSERT_TRUE(isValidShellyServerUri("shelly-269-eu.shelly.cloud"));
+  TEST_ASSERT_TRUE(isValidShellyServerUri("SHELLY-123-US.SHELLY.CLOUD"));
+  TEST_ASSERT_FALSE(isValidShellyServerUri("https://shelly-269-eu.shelly.cloud"));
+  TEST_ASSERT_FALSE(isValidShellyServerUri("shelly-269-eu.shelly.cloud/path"));
+  TEST_ASSERT_FALSE(isValidShellyServerUri("example.com"));
+  TEST_ASSERT_FALSE(isValidShellyServerUri(""));
+}
+
 void test_isValidGaugeMaxKilowatts() {
   TEST_ASSERT_TRUE(isValidGaugeMaxKilowatts("1"));
   TEST_ASSERT_TRUE(isValidGaugeMaxKilowatts("6"));
@@ -52,6 +61,7 @@ void setup() {
   RUN_TEST(test_isValidEmail);
   RUN_TEST(test_isValidShellyDeviceId);
   RUN_TEST(test_isValidPollingInterval);
+  RUN_TEST(test_isValidShellyServerUri);
   RUN_TEST(test_isValidGaugeMaxKilowatts);
   UNITY_END();
 }

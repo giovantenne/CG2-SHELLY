@@ -21,13 +21,14 @@ void test_configstore_persist_roundtrip() {
   EEPROM.begin(EEPROM_SIZE);
   configStoreSetBrightness(77);
   configStoreSetShellyCredentials("a1b2c3d4e5f6", "auth-key");
+  configStoreSetShellyServerUri("shelly-123-eu.shelly.cloud");
   configStoreSetPollingInterval(12);
   configStoreSetGaugeMaxKilowatts(15);
   configStorePersist();
 
   int addr = 0;
   TEST_ASSERT_EQUAL(0xC6, EEPROM.read(addr++));
-  TEST_ASSERT_EQUAL(4, EEPROM.read(addr++));
+  TEST_ASSERT_EQUAL(5, EEPROM.read(addr++));
   int b = EEPROM.read(addr++);
   TEST_ASSERT_EQUAL(77, b);
   String deviceId = readStringFrom(addr);
@@ -38,11 +39,13 @@ void test_configstore_persist_roundtrip() {
   refreshSeconds |= EEPROM.read(addr++) << 8;
   int maxKilowatts = EEPROM.read(addr++);
   maxKilowatts |= EEPROM.read(addr++) << 8;
+  String serverUri = readStringFrom(addr);
 
   TEST_ASSERT_EQUAL_STRING("a1b2c3d4e5f6", deviceId.c_str());
   TEST_ASSERT_EQUAL_STRING("auth-key", authKey.c_str());
   TEST_ASSERT_EQUAL(12, refreshSeconds);
   TEST_ASSERT_EQUAL(15, maxKilowatts);
+  TEST_ASSERT_EQUAL_STRING("shelly-123-eu.shelly.cloud", serverUri.c_str());
 }
 
 void setup() {
