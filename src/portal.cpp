@@ -9,11 +9,26 @@
 #include "nvs_flash.h"
 #include "board.h"
 
+namespace {
+
+void selectCurrentValue(AutoConnectSelect& select, const String& value) {
+  for (size_t index = 0; index < select.size(); ++index) {
+    if (select[index] == value) {
+      select.select(value);
+      return;
+    }
+  }
+  select.add(value);
+  select.select(value);
+}
+
+}  // namespace
+
 String initialize2(AutoConnectAux& aux, PageArgument& args) {
   inputShellyDeviceId.value = shellyDeviceId;
   inputShellyAuthKey.value = shellyAuthKey;
-  inputPollingIntervalSeconds.value = String(pollingIntervalSeconds);
-  inputGaugeMaxKilowatts.value = String(gaugeMaxKilowatts);
+  selectCurrentValue(inputPollingIntervalSeconds, String(pollingIntervalSeconds));
+  selectCurrentValue(inputGaugeMaxKilowatts, String(gaugeMaxKilowatts));
   return String();
 }
 
