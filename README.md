@@ -4,6 +4,10 @@ This is a free and open source project that displays live power usage from a She
 
 The firmware polls the Shelly Cloud API and presents the current power on a tachometer-style gauge. It works as a stand-alone device: after setup, only a USB-C power supply and a Wi-Fi connection are required.
 
+This is a remix of my other project CryptoGadgets v2 (CG2) that I created for my personal use. You can find the original project [here](https://github.com/giovantenne/CG2)
+
+![WiFi Desktop Energy Monitor device](https://www.datocms-assets.com/56675/1784026046-pxl_20260714_104526475.jpg?fm=webp&w=610)
+
 ## Features
 
 - Built-in Wi-Fi: no PC or phone required during normal operation
