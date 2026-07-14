@@ -1,0 +1,22 @@
+# PlatformIO build output and local package cache
+.pio/
+.pio-core/
+
+# Local tooling and temporary reference sources
+.agents/
+.codex/
+.tmp_*/
+
+# Editors and operating systems
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# Local logs and environment files
+*.log
+.env
+.env.*
+!.env.example
